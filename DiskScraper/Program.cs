@@ -19,6 +19,17 @@ var pageCount = int.Parse(
     .InnerText.Split(" ")[2]);
 
 Console.WriteLine(pageCount);
+
+var products = doc.DocumentNode.SelectNodes("//div[contains(@class, 'card-v2')]");
+foreach (var product in products)
+{
+    //259&#44;99 Lei
+    var buf = product.SelectNodes("//p[@class='product-new-price']")[0].InnerText;
+    var price = buf.Split("&#44;")[0];
+    var ddecimal = buf.Split("&#44;")[1].Split(" ")[0];
+    Console.WriteLine($"{price}.{ddecimal}");
+    break;
+}
 //foreach (var item in pageCount)
 //{
 //    var x = item.InnerHtml.Split(" ");

@@ -27,8 +27,12 @@ foreach (var product in products)
     var buf = product.SelectNodes("//p[@class='product-new-price']")[0].InnerText;
     var price = buf.Split("&#44;")[0];
     var ddecimal = buf.Split("&#44;")[1].Split(" ")[0];
-    Console.WriteLine($"{price}.{ddecimal}");
-    break;
+    //card-v2-title 
+    var title = product.SelectNodes("//a[contains(@class, 'card-v2-title ')]")[0].InnerText;
+    var c = title.IndexOf("TB");
+    var capacity = title[c - 1];
+    Console.WriteLine($"{price}.{ddecimal} {capacity}TB");
+      break;
 }
 //foreach (var item in pageCount)
 //{

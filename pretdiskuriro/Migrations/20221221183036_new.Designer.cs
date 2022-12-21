@@ -3,6 +3,7 @@ using System;
 using DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,33 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace pretdiskuriro.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221221183036_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
-
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("Category");
-                });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
                 {
@@ -58,21 +40,6 @@ namespace pretdiskuriro.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("DailyPrice");
-                });
-
-            modelBuilder.Entity("DbModels.Market", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Market");
                 });
 
             modelBuilder.Entity("DbModels.Product", b =>
@@ -119,32 +86,6 @@ namespace pretdiskuriro.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MarketProduct", b =>
-                {
-                    b.Property<int>("MarketsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("MarketsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("MarketProduct");
-                });
-
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.HasOne("DbModels.Product", "Product")
-                        .WithOne("Category")
-                        .HasForeignKey("DbModels.Category", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("DbModels.DailyPrice", b =>
                 {
                     b.HasOne("DbModels.Product", "Product")
@@ -156,26 +97,8 @@ namespace pretdiskuriro.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MarketProduct", b =>
-                {
-                    b.HasOne("DbModels.Market", null)
-                        .WithMany()
-                        .HasForeignKey("MarketsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DbModels.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DbModels.Product", b =>
                 {
-                    b.Navigation("Category")
-                        .IsRequired();
-
                     b.Navigation("Prices");
                 });
 #pragma warning restore 612, 618

@@ -23,3 +23,33 @@
 //app.MapRazorPages();
 
 //app.Run();
+
+using DbModels;
+using pretdiskuriro.Data;
+
+// MainScraper.Run();
+
+var products = new List<Product>();
+var product = new Product
+{
+    Title = "Testing",
+    Prices = new List<DailyPrice>()
+};
+product.Prices.Add(new DailyPrice { Price = 100 });
+var product2 = new Product
+{
+    Title = "Testing2",
+    Prices = new List<DailyPrice>()
+};
+product2.Prices.Add(new DailyPrice { Price = 200 });
+var product3 = new Product
+{
+    Title = "Testing3",
+    Prices = new List<DailyPrice>()
+};
+product3.Prices.Add(new DailyPrice { Price = 400 });
+
+products.Add(product);
+products.Add(product2);
+products.Add(product3);
+Repository.MergeNewProducts(products);

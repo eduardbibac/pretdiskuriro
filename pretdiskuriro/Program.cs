@@ -35,7 +35,7 @@ var product = new Product
     Title = "Testing",
     Prices = new List<DailyPrice>()
 };
-product.Prices.Add(new DailyPrice { Price = 100 });
+product.Prices.Add(new DailyPrice { Price = 120 });
 var product2 = new Product
 {
     Title = "Testing2",
@@ -47,7 +47,7 @@ var product3 = new Product
     Title = "Testing3",
     Prices = new List<DailyPrice>()
 };
-product3.Prices.Add(new DailyPrice { Price = 400 });
+product3.Prices.Add(new DailyPrice { Price = 400 });    
 
 products.Add(product);
 products.Add(product2);

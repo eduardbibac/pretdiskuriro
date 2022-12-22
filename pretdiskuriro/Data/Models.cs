@@ -62,7 +62,8 @@ namespace DbModels
 
         [Required]
         public float Price { get; set; }
-        public DateTime EndDate { get; set; }
+        [AllowNull]
+        public DateTime? EndDate { get; set; }
 
 
         public Product Product { get; set; } // Foreign key

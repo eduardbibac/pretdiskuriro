@@ -18,7 +18,7 @@ namespace pretdiskuriro.Data
             }
         }
 
-        private static void AddNewProducts(List<Product> scrapes)
+        private static void AddNewProducts(List<Product> scrapes, string marketName)
         {
             // This function does:
             // OR: Adds the items that were previously not in the database
@@ -48,18 +48,19 @@ namespace pretdiskuriro.Data
 
             using (var context = new DataContext())
             {
-                // We do a join to get the latest price(where it's null) for each item in db 
-                //  then we join that to the newly scraped items on TITLE and select the ones where the price is different
-                // AKA Update the items where the price changed and move older price to history
+                // Join DailyPrices and Products to get the latest price for each product in the database
+                // Then join the result to the newly scraped products on the title
+                // AKA Update the products where the price has changed and archive older price
                 var productsWithPrice = from price in context.DailyPrices.AsEnumerable()
                                         join product in context.Products on price.ProductId equals product.Id
                                         where price.EndDate == null
                                         // up TODO: GetProductsWithCurrentPrice() -> how would I make this in a reusable function??hm?
+                                        //https://stackoverflow.com/questions/7712951/reusing-a-join-in-linq
                                         join scrape in scrapes on product.Title equals scrape.Title
                                         where  price.Price != scrape.Prices[0].Price
                                         select new { product, price, newPrice = scrape.Prices[0].Price };
 
-                // Add new DailyPrice and mark older one as ended (by date)
+                // For each product with a changed price, add a new DailyPrice with the new price and mark the old price as ended
                 foreach (var p in productsWithPrice) 
                 {
                     p.product.Prices.Add(new DailyPrice { Price = p.newPrice, EndDate=null});
@@ -69,9 +70,9 @@ namespace pretdiskuriro.Data
             }
         }
 
-        public static void MergeNewProducts(List<Product> scrapes)
+        public static void MergeNewProducts(List<Product> scrapes, string marketName)
         {
-            AddNewProducts(scrapes);
+            AddNewProducts(scrapes, marketName);
             UpdateExistingProductsPrice(scrapes);
 
             // TODO: Eliminate Delisted Products

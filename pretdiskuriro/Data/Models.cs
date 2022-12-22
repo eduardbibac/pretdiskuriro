@@ -56,6 +56,9 @@ namespace DbModels
         public Product Product { get; set; }
     }
 
+    /* To get the current price you need to look for the DailyPrice with NULL,
+        DailyPrices with valid EndDate are treated as HISTORY; for the price tracker
+     */
     public class DailyPrice
     {
         public int Id { get; set; }

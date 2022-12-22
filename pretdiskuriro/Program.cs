@@ -27,7 +27,6 @@
 using DbModels;
 using pretdiskuriro.Data;
 
-// MainScraper.Run();
 
 var products = new List<Product>();
 var product = new Product
@@ -35,7 +34,7 @@ var product = new Product
     Title = "Testing",
     Prices = new List<DailyPrice>()
 };
-product.Prices.Add(new DailyPrice { Price = 120 });
+product.Prices.Add(new DailyPrice { Price = 140 });
 var product2 = new Product
 {
     Title = "Testing2",
@@ -52,4 +51,5 @@ product3.Prices.Add(new DailyPrice { Price = 400 });
 products.Add(product);
 products.Add(product2);
 products.Add(product3);
-Repository.MergeNewProducts(products);
+//MainScraper.Run();
+Repository.MergeNewProducts(products, MarketName.EMAG);

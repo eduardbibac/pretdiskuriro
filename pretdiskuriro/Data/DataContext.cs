@@ -10,6 +10,8 @@ namespace DbModels
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<DailyPrice> DailyPrices { get; set; }
+        public DbSet<Market> Markets { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite(@"Data Source=C:\Users\ed\Documents\pretdiskuriro\pretdiskuriro\db.db");

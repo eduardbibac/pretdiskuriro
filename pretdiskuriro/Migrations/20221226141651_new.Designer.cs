@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace pretdiskuriro.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221221205702_nullableforreal")]
-    partial class nullableforreal
+    [Migration("20221226141651_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,7 +38,7 @@ namespace pretdiskuriro.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
@@ -75,7 +75,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Market");
+                    b.ToTable("Markets");
                 });
 
             modelBuilder.Entity("DbModels.Product", b =>
@@ -124,15 +124,15 @@ namespace pretdiskuriro.Migrations
 
             modelBuilder.Entity("MarketProduct", b =>
                 {
-                    b.Property<int>("MarketsId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ProductsId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("MarketsId", "ProductsId");
+                    b.Property<int>("ZMarketsId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasIndex("ProductsId");
+                    b.HasKey("ProductsId", "ZMarketsId");
+
+                    b.HasIndex("ZMarketsId");
 
                     b.ToTable("MarketProduct");
                 });
@@ -161,15 +161,15 @@ namespace pretdiskuriro.Migrations
 
             modelBuilder.Entity("MarketProduct", b =>
                 {
-                    b.HasOne("DbModels.Market", null)
-                        .WithMany()
-                        .HasForeignKey("MarketsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DbModels.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DbModels.Market", null)
+                        .WithMany()
+                        .HasForeignKey("ZMarketsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

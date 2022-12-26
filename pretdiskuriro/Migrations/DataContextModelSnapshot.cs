@@ -35,7 +35,7 @@ namespace pretdiskuriro.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
@@ -72,7 +72,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Market");
+                    b.ToTable("Markets");
                 });
 
             modelBuilder.Entity("DbModels.Product", b =>

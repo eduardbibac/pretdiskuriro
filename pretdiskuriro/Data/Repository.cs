@@ -18,6 +18,20 @@ namespace pretdiskuriro.Data
             }
         }
 
+        private static Market GetMarketByName(string marketName)
+        {
+            using (var context = new DataContext())
+            {
+                var markets = context.Markets.Include(o => o.Products).ToList();
+                var q = from market in markets
+                        where market.Name == marketName
+                        select market;
+                
+                return q.First();
+            }
+        }
+
+        // TODO: Availabilty dates
         private static void AddNewProducts(List<Product> scrapes, string marketName)
         {
             // This function does:
@@ -26,6 +40,8 @@ namespace pretdiskuriro.Data
             // OR: Ads the items that have been scraped for the first time
             using (var context = new DataContext())
             {
+
+
                 // get items not contained in inner join
                 // inner join = existing
                 /* Note that this is a "client evaluation" linq by adding .AsEnumerable()
@@ -34,11 +50,20 @@ namespace pretdiskuriro.Data
                 */
                 var newScrapes = from newScrape in scrapes
                                  where !(from product in context.Products.AsEnumerable()
-                                        join scrape in scrapes on product.Title equals scrape.Title
+                                         join scrape in scrapes on product.Title equals scrape.Title
                                         select scrape.Title).Contains(newScrape.Title)
                                  select newScrape;
 
-                context.Products.AddRange(newScrapes);
+
+
+                
+                // Set market
+                var market = GetMarketByName(marketName);
+                //foreach (var prod in newScrapes)
+                //{
+                //    prod.Markets.Add(market);
+                //}
+                market.Products.AddRange(newScrapes);
                 context.SaveChanges();
             }
         }

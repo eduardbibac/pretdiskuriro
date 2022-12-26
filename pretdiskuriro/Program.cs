@@ -31,7 +31,7 @@ using pretdiskuriro.Data;
 var products = new List<Product>();
 var product = new Product
 {
-    Title = "Testing",
+    Title = "Testing24",
     Prices = new List<DailyPrice>()
 };
 product.Prices.Add(new DailyPrice { Price = 140 });

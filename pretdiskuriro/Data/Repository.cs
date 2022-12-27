@@ -16,10 +16,10 @@ namespace pretdiskuriro.Data
             _db.SaveChanges();
         }
 
-        private static Market GetMarketByName(string marketName)
+        public static Market GetMarketByName(string marketName)
         {
             // Include relation tables 
-            var q = from market in _db.Markets.Include(m=>m.Products).ToList()
+            var q = from market in _db.Markets
                     where market.Name == marketName
                     select market;
                 
@@ -27,7 +27,7 @@ namespace pretdiskuriro.Data
         }
 
         // TODO: Availabilty dates
-        private static void AddNewProducts(List<Product> scrapes, string marketName)
+        private static void AddNewProducts(List<MarketProduct> scrapes)
         {
             // This function does:
             // OR: Adds the items that were previously not in the database
@@ -43,45 +43,45 @@ namespace pretdiskuriro.Data
             */
             var querryForNewScrapes = from newScrape in scrapes
                                 where !(from product in _db.Products.AsEnumerable()
-                                        join scrape in scrapes on product.Title equals scrape.Title
-                                    select scrape.Title).Contains(newScrape.Title)
+                                        join scrape in scrapes on product.Title equals scrape.Product.Title
+                                        select scrape.Product.Title).Contains(newScrape.Product.Title)
                                 select newScrape;
 
             var newScrapes = querryForNewScrapes.ToList();
-            _db.Products.AddRange(newScrapes);
+            _db.MarketProducts.AddRange(newScrapes);
             _db.SaveChanges();
 
-            // Set market
-            var market = GetMarketByName(marketName);
-            market.Products.AddRange(newScrapes);
+            //// Set market
+            //var market = GetMarketByName(marketName);
+            //market.Products.AddRange(newScrapes);
         }
 
-        private static void UpdateExistingProductsPrice(List<Product> scrapes)
+        private static void UpdateExistingProductsPrice(List<MarketProduct> scrapes)
         {
             // Join DailyPrices and Products to get the latest price for each product in the database
             // Then join the result to the newly scraped products on the title
             // AKA Update the products where the price has changed and archive older price
             var productsWithPrice = from price in _db.DailyPrices.AsEnumerable()
-                                    join product in _db.Products on price.ProductId equals product.Id
+                                    join marketProduct in _db.MarketProducts on price.MarketProductId equals marketProduct.Id
                                     where price.EndDate == null
                                     // up TODO: GetProductsWithCurrentPrice() -> how would I make this in a reusable function??hm?
                                     //https://stackoverflow.com/questions/7712951/reusing-a-join-in-linq
-                                    join scrape in scrapes on product.Title equals scrape.Title
+                                    join scrape in scrapes on marketProduct.Product.Title equals scrape.Product.Title
                                     where  price.Price != scrape.Prices[0].Price
-                                    select new { product, price, newPrice = scrape.Prices[0].Price };
+                                    select new { marketProduct, price, newPrice = scrape.Prices[0].Price };
 
             // For each product with a changed price, add a new DailyPrice with the new price and mark the old price as ended
             foreach (var p in productsWithPrice) 
             {
-                p.product.Prices.Add(new DailyPrice { Price = p.newPrice, EndDate=null});
+                p.marketProduct.Prices.Add(new DailyPrice { Price = p.newPrice, EndDate=null});
                 p.price.EndDate = DateTime.Now;
             }
             _db.SaveChanges();
         }
 
-        public static void MergeNewProducts(List<Product> scrapes, string marketName)
+        public static void MergeNewProducts(List<MarketProduct> scrapes)
         {
-            AddNewProducts(scrapes, marketName);
+            AddNewProducts(scrapes);
             UpdateExistingProductsPrice(scrapes);
 
             // TODO: Eliminate Delisted Products

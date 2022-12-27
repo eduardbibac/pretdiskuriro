@@ -16,7 +16,7 @@ public class MainScraper
 {
     public static void Run()
     {
-        List<Product> emagPoructs = Emag.RunScraper();
-        Repository.MergeNewProducts(emagPoructs, MarketName.EMAG);
+        List<MarketProduct> emagPoructs = Emag.RunScraper();
+        Repository.MergeNewProducts(emagPoructs);
     }
 }

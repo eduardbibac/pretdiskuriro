@@ -1,12 +1,13 @@
 ﻿using DbModels;
 using HtmlAgilityPack;
+using pretdiskuriro.Data;
 using System.Web;
 
 namespace pretdiskuriro.Scraper
 {
     public class Emag
     {
-        public static List<Product> RunScraper()
+        public static List<MarketProduct> RunScraper()
         {
             var web = new HtmlWeb();
 
@@ -19,8 +20,9 @@ namespace pretdiskuriro.Scraper
                 .SelectNodes("//div[contains(@class, 'js-listing-pagination')]")[0]
                 .InnerText.Split(" ")[2]);
 
-            Console.WriteLine(pageCount);
-            var products = new List<Product>();
+            var marketProducts = new List<MarketProduct>();
+            var emagMarket = Repository.GetMarketByName(MarketName.EMAG);
+
 
             // TODO: FOREACH PAGE
             // TODO: FOR MORE CATEGORIES
@@ -47,19 +49,17 @@ namespace pretdiskuriro.Scraper
 
                 var price = float.Parse($"{intPrice}.{decimalPrice}");
 
-
                 var product = new Product
                 {
-                    Title = title,
-                    Prices = new List<DailyPrice>()
+                    Title = title
                 };
-                product.Prices.Add(new DailyPrice { Price = price });
-
-                products.Add(product);
+                var marketProduct = new MarketProduct { Market = emagMarket, Product = product };
+                marketProduct.Prices.Add(new DailyPrice { Price = price });
+                marketProducts.Add(marketProduct);
             }
 
 
-            return products;
+            return marketProducts;
             // TODO: time limiter ? don't run the scraper if 12 hours didn't pass
             // TODO: Pirce tracker (we need a price history)
             // TODO: match newly scraped products with exisitng products in DB, by productNo or something

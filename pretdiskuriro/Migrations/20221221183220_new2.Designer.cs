@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace pretdiskuriro.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221226141651_new")]
-    partial class @new
+    [Migration("20221221183220_new2")]
+    partial class new2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,15 +30,9 @@ namespace pretdiskuriro.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
@@ -47,7 +41,7 @@ namespace pretdiskuriro.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Price")
@@ -60,7 +54,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("DailyPrices");
+                    b.ToTable("DailyPrice");
                 });
 
             modelBuilder.Entity("DbModels.Market", b =>
@@ -75,7 +69,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Markets");
+                    b.ToTable("Market");
                 });
 
             modelBuilder.Entity("DbModels.Product", b =>
@@ -84,11 +78,16 @@ namespace pretdiskuriro.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -124,28 +123,17 @@ namespace pretdiskuriro.Migrations
 
             modelBuilder.Entity("MarketProduct", b =>
                 {
+                    b.Property<int>("MarketsId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ProductsId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ZMarketsId")
-                        .HasColumnType("INTEGER");
+                    b.HasKey("MarketsId", "ProductsId");
 
-                    b.HasKey("ProductsId", "ZMarketsId");
-
-                    b.HasIndex("ZMarketsId");
+                    b.HasIndex("ProductsId");
 
                     b.ToTable("MarketProduct");
-                });
-
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.HasOne("DbModels.Product", "Product")
-                        .WithOne("Category")
-                        .HasForeignKey("DbModels.Category", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
@@ -159,26 +147,34 @@ namespace pretdiskuriro.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MarketProduct", b =>
+            modelBuilder.Entity("DbModels.Product", b =>
                 {
-                    b.HasOne("DbModels.Product", null)
+                    b.HasOne("DbModels.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("MarketProduct", b =>
+                {
                     b.HasOne("DbModels.Market", null)
                         .WithMany()
-                        .HasForeignKey("ZMarketsId")
+                        .HasForeignKey("MarketsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DbModels.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("DbModels.Product", b =>
                 {
-                    b.Navigation("Category")
-                        .IsRequired();
-
                     b.Navigation("Prices");
                 });
 #pragma warning restore 612, 618

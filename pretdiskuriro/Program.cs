@@ -27,16 +27,29 @@
 using DbModels;
 using pretdiskuriro.Data;
 
-var marketProducts = new List<MarketProduct>();
-var emagMarket = Repository.GetMarketByName(MarketName.EMAG);
-var product1 = new Product
+
+var products = new List<Product>();
+var product = new Product
 {
-    Title = "Testing1"
+    Title = "Testing",
+    Prices = new List<DailyPrice>()
 };
-var marketProduct1 = new MarketProduct { Market = emagMarket, Product = product1, Prices=new List<DailyPrice>() };
-marketProduct1.Prices.Add(new DailyPrice { Price = 150, MarketProduct=marketProduct1 });
+product.Prices.Add(new DailyPrice { Price = 140 });
+var product2 = new Product
+{
+    Title = "Testing2",
+    Prices = new List<DailyPrice>()
+};
+product2.Prices.Add(new DailyPrice { Price = 200 });
+var product3 = new Product
+{
+    Title = "Testing3",
+    Prices = new List<DailyPrice>()
+};
+product3.Prices.Add(new DailyPrice { Price = 400 });    
 
-
-marketProducts.Add(marketProduct1);
+products.Add(product);
+products.Add(product2);
+products.Add(product3);
 //MainScraper.Run();
-Repository.MergeNewProducts(marketProducts);
+Repository.MergeNewProducts(products, MarketName.EMAG);

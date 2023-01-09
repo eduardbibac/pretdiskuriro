@@ -3,6 +3,7 @@ using System;
 using DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,33 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace pretdiskuriro.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221221183148_new1")]
+    partial class new1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
-
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
-
-                    b.ToTable("Category");
-                });
 
             modelBuilder.Entity("DbModels.DailyPrice", b =>
                 {
@@ -44,7 +26,7 @@ namespace pretdiskuriro.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Price")
@@ -57,7 +39,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("DailyPrices");
+                    b.ToTable("DailyPrice");
                 });
 
             modelBuilder.Entity("DbModels.Market", b =>
@@ -134,17 +116,6 @@ namespace pretdiskuriro.Migrations
                     b.ToTable("MarketProduct");
                 });
 
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.HasOne("DbModels.Product", "Product")
-                        .WithOne("Category")
-                        .HasForeignKey("DbModels.Category", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("DbModels.DailyPrice", b =>
                 {
                     b.HasOne("DbModels.Product", "Product")
@@ -173,9 +144,6 @@ namespace pretdiskuriro.Migrations
 
             modelBuilder.Entity("DbModels.Product", b =>
                 {
-                    b.Navigation("Category")
-                        .IsRequired();
-
                     b.Navigation("Prices");
                 });
 #pragma warning restore 612, 618

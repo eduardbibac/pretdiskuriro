@@ -3,6 +3,7 @@ using System;
 using DbModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace pretdiskuriro.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221221183540_new4")]
+    partial class new4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -27,13 +30,7 @@ namespace pretdiskuriro.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique();
 
                     b.ToTable("Category");
                 });
@@ -44,7 +41,7 @@ namespace pretdiskuriro.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<float>("Price")
@@ -57,7 +54,7 @@ namespace pretdiskuriro.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("DailyPrices");
+                    b.ToTable("DailyPrice");
                 });
 
             modelBuilder.Entity("DbModels.Market", b =>
@@ -81,11 +78,16 @@ namespace pretdiskuriro.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -134,17 +136,6 @@ namespace pretdiskuriro.Migrations
                     b.ToTable("MarketProduct");
                 });
 
-            modelBuilder.Entity("DbModels.Category", b =>
-                {
-                    b.HasOne("DbModels.Product", "Product")
-                        .WithOne("Category")
-                        .HasForeignKey("DbModels.Category", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("DbModels.DailyPrice", b =>
                 {
                     b.HasOne("DbModels.Product", "Product")
@@ -154,6 +145,17 @@ namespace pretdiskuriro.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("DbModels.Product", b =>
+                {
+                    b.HasOne("DbModels.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("MarketProduct", b =>
@@ -173,9 +175,6 @@ namespace pretdiskuriro.Migrations
 
             modelBuilder.Entity("DbModels.Product", b =>
                 {
-                    b.Navigation("Category")
-                        .IsRequired();
-
                     b.Navigation("Prices");
                 });
 #pragma warning restore 612, 618

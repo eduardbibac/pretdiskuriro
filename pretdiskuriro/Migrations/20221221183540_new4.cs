@@ -5,7 +5,7 @@
 namespace pretdiskuriro.Migrations
 {
     /// <inheritdoc />
-    public partial class xd : Migration
+    public partial class new4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

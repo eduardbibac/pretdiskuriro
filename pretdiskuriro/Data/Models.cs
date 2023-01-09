@@ -26,6 +26,23 @@ namespace DbModels
 
     }
 
+    public class Product
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public string Title { get; set; }
+
+        [AllowNull]
+        public Category Category { get; set; } // 11
+
+        [Required]
+        public List<DailyPrice> Prices { get; set; } // 1m
+
+        public List<Market> Markets { get; set; } // mm
+
+    }
+
     public class Category
     {
         public int Id { get; set; }
@@ -52,23 +69,10 @@ namespace DbModels
         public DateTime? EndDate { get; set; }
 
 
-        public MarketProduct MarketProduct { get; set; } // Foreign key
-        public int MarketProductId { get; set; }
-    }
-
-    public class MarketProduct
-    {
-        public int Id { get; set; }
-
         public Product Product { get; set; } // Foreign key
-        public int ProductId { get; set; }
-
-        public Market Market { get; set; } // Foreign key
-        public int MarketId { get; set; }
-
-        [Required]
-        public List<DailyPrice> Prices { get; set; } // 1m
+        public int ProductId{ get; set; }   
     }
+
     // Furnizori
     public class Market
     {
@@ -77,19 +81,8 @@ namespace DbModels
         [Required]
         public string Name { get; set; }
 
-        public List<MarketProduct> MarketProducts { get; set; }
-    }
-    public class Product
-    {
-        public int Id { get; set; }
-
-        [Required]
-        public string Title { get; set; }
-
-        [AllowNull]
-        public Category Category { get; set; } // 11
-
-        public List<MarketProduct> MarketProducts { get; set; } // mm
+        public List<Product> Products { get; set; }
 
     }
+
 }

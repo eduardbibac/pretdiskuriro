@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using static System.Formats.Asn1.AsnWriter;
+using static WinPretDiskuri.Form1;
 
 namespace WinPretDiskuri.Data
 {
@@ -76,5 +77,35 @@ namespace WinPretDiskuri.Data
 
             // TODO: Eliminate Delisted Products
         }
+
+        public static List<HDDEntry> GetSortedPriceTB() 
+        {
+            using (var context = new DataContext())
+            {
+                var querry = from price in context.DailyPrices.AsEnumerable()
+                                        join product in context.Products on price.ProductId equals product.Id
+                                        where price.EndDate == null
+                                        orderby price.Price / product.CapacityInTB ascending
+                                        select new {product, price};
+
+                var productsWithPrice = querry.ToList();
+
+                var entries = new List<HDDEntry>();
+                foreach(var product in productsWithPrice)
+                {
+                    var pvalue = product.product;
+                    var ptb = product.price.Price / pvalue.CapacityInTB;
+
+                    entries.Add(new HDDEntry {
+                        Marime = pvalue.CapacityInTB + "TB",
+                        Nume = pvalue.Title,
+                        PretTB = ptb.ToString(),
+                    });
+                }
+
+                return entries;
+            }
+        }
+
     }
 }

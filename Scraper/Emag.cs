@@ -42,6 +42,18 @@ namespace WinPretDiskuri.Scraper
             float capacity = (float)x / multip;
             return capacity;
         }
+
+        private static int[] GetRandomDelaysBetween(int n, int l, int r)
+        {
+            int[] delays = new int[n];
+            var rnd = new Random();
+            for(int i =0; i<n; i++)
+            {
+                delays[i] = rnd.Next(l, r);
+            }
+
+            return delays;
+        }
         public static List<Product> RunScraper()
         {
             var web = new HtmlWeb();
@@ -50,45 +62,67 @@ namespace WinPretDiskuri.Scraper
             // foreach category in categoriestoscrape
             HtmlAgilityPack.HtmlDocument doc = web.Load("https://www.emag.ro/hard_disk-uri");
             // Get the last page number
-            var pageCount = int.Parse(
+            var productsOnPage = int.Parse(
                 doc.DocumentNode
-                .SelectNodes("//div[contains(@class, 'js-listing-pagination')]")[0]
+                .SelectNodes("//div[contains(@class, 'js-listing-pagination')]/strong")[0]
                 .InnerText.Split(" ")[2]);
 
+            var totalProducts = int.Parse(
+                doc.DocumentNode
+                .SelectNodes("//div[contains(@class, 'js-listing-pagination')]/strong")[1].InnerText);
+
+            int pages = (int)Math.Ceiling((double)totalProducts / productsOnPage);
+            var delays = GetRandomDelaysBetween(pages, 1, 6);
             var products = new List<Product>();
 
-            // TODO: FOREACH PAGE
-            // TODO: FOR MORE CATEGORIES
-            // TODO: RANDOM RATE LIMITER, DO IT IN ONE PASS IN AN ARRAY, UTILITY FUNCTION
-            // TODO: CAL ETA
-            // TODO: ASYNC?
-            var card_grid = doc.DocumentNode.SelectSingleNode("//div[@id='card_grid']");
-            var nodesnodeProduct = card_grid.SelectNodes(".//div[contains(@class, 'card-v2-wrapper')]");
-            foreach (var nodeProduct in nodesnodeProduct)
+            for (int i = 1; i <= pages; i++)
             {
-                var buf = HttpUtility.HtmlDecode(nodeProduct.SelectSingleNode(".//p[@class='product-new-price']").InnerText)
-                    .Split(",");
-                var intPrice = buf[0].Replace(".", "");
-                var decimalPrice = buf[1].Split(" ")[0];
-
-                var title = nodeProduct.SelectSingleNode(".//a[contains(@class, 'card-v2-title ')]").InnerText;
-                
-                var capacity = GetCapacityInTB(title);
-
-                var price = float.Parse($"{intPrice}.{decimalPrice}");
-
-
-                var product = new Product
+                if(i>1)
                 {
-                    Title = title,
-                    Prices = new List<DailyPrice>(),
-                    CapacityInTB = capacity,
-                };
-                product.Prices.Add(new DailyPrice { Price = price });
+                    int procent = (int)((float)i / pages * 100 * 0.8);
+                    MainScraper.worker.ReportProgress(procent);
+                    Thread.Sleep(delays[i-1] * 1000);
+                    doc = web.Load($"https://www.emag.ro/hard_disk-uri/p{i}/c");
+                }
+                // TODO: FOREACH PAGE
+                // TODO: FOR MORE CATEGORIES
+                // TODO: RANDOM RATE LIMITER, DO IT IN ONE PASS IN AN ARRAY, UTILITY FUNCTION
+                // TODO: CAL ETA
+                // TODO: ASYNC?
+                var card_grid = doc.DocumentNode.SelectSingleNode("//div[@id='card_grid']");
+                var nodesnodeProduct = card_grid.SelectNodes(".//div[contains(@class, 'card-v2-wrapper')]");
+                foreach (var nodeProduct in nodesnodeProduct)
+                {
+                    try
+                    {
+                        var nodePrice = nodeProduct.SelectSingleNode(".//p[@class='product-new-price']");
+                        
+                        string[] buf;
+                        if (nodePrice != null)
+                            buf = HttpUtility.HtmlDecode(nodePrice.InnerText).Split(",");
+                        else continue;
+                        var intPrice = buf[0].Replace(".", "");
+                        var decimalPrice = buf[1].Split(" ")[0];
 
-                products.Add(product);
+                        var title = nodeProduct.SelectSingleNode(".//a[contains(@class, 'card-v2-title ')]").InnerText;
+
+                        var capacity = GetCapacityInTB(title);
+
+                        var price = float.Parse($"{intPrice}.{decimalPrice}");
+
+
+                        var product = new Product
+                        {
+                            Title = title,
+                            Prices = new List<DailyPrice>(),
+                            CapacityInTB = capacity,
+                        };
+                        product.Prices.Add(new DailyPrice { Price = price });
+                        products.Add(product);
+                    } catch (Exception) { continue; }
+                }
+
             }
-
 
             return products;
         }

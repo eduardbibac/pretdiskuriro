@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using WinPretDiskuri.Data;
 
 namespace WinPretDiskuri
 {
@@ -13,6 +14,8 @@ namespace WinPretDiskuri
         public Form1()
         {
             InitializeComponent();
+
+            dataGridView1.DataSource = Repository.GetSortedPriceTB();
 
             backgroundWorker1.WorkerReportsProgress = true;
             backgroundWorker1.WorkerSupportsCancellation = true;
@@ -57,6 +60,7 @@ namespace WinPretDiskuri
             else
             {
                 resultLabel.Text = "Done!";
+                dataGridView1.DataSource = Repository.GetSortedPriceTB();
                 resultLabel.Visible = false;
             }
         }

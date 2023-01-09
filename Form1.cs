@@ -4,6 +4,12 @@ namespace WinPretDiskuri
 {
     public partial class Form1 : Form
     {
+        public class HDDEntry
+        {
+            public string Nume { get; set; }
+            public string Marime { get; set; }
+            public string PretTB { get; set; }
+        }
         public Form1()
         {
             InitializeComponent();
@@ -51,6 +57,7 @@ namespace WinPretDiskuri
             else
             {
                 resultLabel.Text = "Done!";
+                resultLabel.Visible = false;
             }
         }
     }

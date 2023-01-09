@@ -11,7 +11,7 @@ using WinPretDiskuri.Data;
 namespace WinPretDiskuri.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230109192616_init")]
+    [Migration("20230109200514_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -97,6 +97,9 @@ namespace WinPretDiskuri.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CapacityInGB")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

@@ -30,7 +30,8 @@ namespace WinPretDiskuri.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false)
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    CapacityInGB = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

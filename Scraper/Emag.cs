@@ -6,6 +6,42 @@ namespace WinPretDiskuri.Scraper
 {
     public class Emag
     {
+        private static int FindNumberToLeftOfIndex(string title, int index)
+        {
+            int i = index - 1;
+            bool whiteflag = false;
+            string value = "";
+            while (true)
+            {
+                var isNumber = title[i] >= '0' && title[i] <= '9';
+
+                if (isNumber)
+                {
+                    whiteflag = true;
+                    value = title[i] + value;
+                }
+                else if (whiteflag == true) { break; }
+                i--;
+            }
+            return int.Parse(value);
+        }
+        public static float GetCapacityInTB(string title)
+        {
+            var c = title.ToLower().IndexOf("tb");
+            int multip = 1;
+            if (c == -1)
+            {
+                multip = 1024;
+                c = title.ToLower().IndexOf("gb");
+                if (c == -1)
+                {
+                    return 0;
+                }   
+            }
+            var x = FindNumberToLeftOfIndex(title, c);
+            float capacity = (float)x / multip;
+            return capacity;
+        }
         public static List<Product> RunScraper()
         {
             var web = new HtmlWeb();
@@ -19,7 +55,6 @@ namespace WinPretDiskuri.Scraper
                 .SelectNodes("//div[contains(@class, 'js-listing-pagination')]")[0]
                 .InnerText.Split(" ")[2]);
 
-            Console.WriteLine(pageCount);
             var products = new List<Product>();
 
             // TODO: FOREACH PAGE
@@ -37,13 +72,8 @@ namespace WinPretDiskuri.Scraper
                 var decimalPrice = buf[1].Split(" ")[0];
 
                 var title = nodeProduct.SelectSingleNode(".//a[contains(@class, 'card-v2-title ')]").InnerText;
-                // TODO: 512GBs...
-                var c = title.IndexOf("TB");
-                var capacity = '0';
-                if (c != -1)
-                {
-                    capacity = title[c - 1];
-                }
+                
+                var capacity = GetCapacityInTB(title);
 
                 var price = float.Parse($"{intPrice}.{decimalPrice}");
 
@@ -51,7 +81,8 @@ namespace WinPretDiskuri.Scraper
                 var product = new Product
                 {
                     Title = title,
-                    Prices = new List<DailyPrice>()
+                    Prices = new List<DailyPrice>(),
+                    CapacityInTB = capacity,
                 };
                 product.Prices.Add(new DailyPrice { Price = price });
 
@@ -60,9 +91,6 @@ namespace WinPretDiskuri.Scraper
 
 
             return products;
-            // TODO: time limiter ? don't run the scraper if 12 hours didn't pass
-            // TODO: Pirce tracker (we need a price history)
-            // TODO: match newly scraped products with exisitng products in DB, by productNo or something
         }
     }
 }

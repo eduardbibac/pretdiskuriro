@@ -32,6 +32,8 @@ namespace WinPretDiskuri.Data
         [Required]
         public string Title { get; set; }
 
+        public float CapacityInTB { get; set; }   
+
         [AllowNull]
         public Category Category { get; set; } // 11
 

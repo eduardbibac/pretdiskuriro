@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Formats.Asn1;
 using System.Globalization;
@@ -13,9 +14,13 @@ public static class MarketName
 }
 public class MainScraper
 {
+    public static BackgroundWorker worker;
     public static void Run()
     {
         List<Product> emagPoructs = Emag.RunScraper();
+        
+        worker.ReportProgress(80);
         Repository.MergeNewProducts(emagPoructs, MarketName.EMAG);
+        worker.ReportProgress(100);
     }
 }

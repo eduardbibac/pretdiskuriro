@@ -17,11 +17,11 @@ namespace WinPretDiskuri
 
             dataGridView1.DataSource = Repository.GetSortedPriceTB();
 
+            // https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.backgroundworker?redirectedfrom=MSDN&view=net-7.0
             backgroundWorker1.WorkerReportsProgress = true;
             backgroundWorker1.WorkerSupportsCancellation = true;
         }
 
-        // https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.backgroundworker?redirectedfrom=MSDN&view=net-7.0
         private void button1_Click(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy != true)

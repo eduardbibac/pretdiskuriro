@@ -102,7 +102,7 @@ namespace WinPretDiskuri.Data
                         PretTB = ptb.ToString(),
                     });
                 }
-
+                 
                 return entries;
             }
         }

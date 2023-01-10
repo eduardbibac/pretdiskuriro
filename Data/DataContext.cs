@@ -18,7 +18,6 @@ namespace WinPretDiskuri.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Make fields UNIQUE here because microsoft is too retarded to make proper convenience with annotations actually fukcing work
             // Multi dolar company
             modelBuilder.Entity<User>()
                 .HasIndex(u => new { u.Email })
